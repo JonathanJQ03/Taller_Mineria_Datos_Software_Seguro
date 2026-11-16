@@ -1,0 +1,42 @@
+N.º,caso,codigo,etiqueta_real,riesgo_esperado
+1,SQL Injection,"db.query(""SELECT * FROM users WHERE id = "" + req.query.id);",vulnerable,Concatenación directa de parámetros HTTP en una consulta SQL.
+2,XSS con innerHTML,document.getElementById('user-bio').innerHTML = req.body.bio;,vulnerable,Inserción de contenido de usuario sin sanitización directamente en el DOM.
+3,Command Injection,"child_process.exec('ping ' + req.body.host, (err, stdout) => {});",vulnerable,"Uso de exec con concatenación de cadenas, permitiendo ejecución arbitraria en el sistema operativo."
+4,Path Traversal,"const file = fs.readFileSync('./publicfiles/' + req.params.filename, 'utf8');",vulnerable,Lectura de archivos locales usando rutas controladas por el usuario sin validación.
+5,Ejecución dinámica con eval,"const result = eval(""("" + req.body.userInput + "")"");",vulnerable,Ejecución de código arbitrario enviado por el cliente mediante eval.
+6,NoSQL Injection,"db.collection('users').findOne({ username: req.body.username, password: req.body.password });",vulnerable,Uso vulnerable de objetos de consulta NoSQL manipulados mediante peticiones maliciosas.
+7,SSRF (Server-Side Request Forgery),axios.get(req.query.url).then(response => res.send(response.data));,vulnerable,Petición HTTP a URLs arbitrarias provistas por el usuario sin restricciones.
+8,Prototype Pollution,"Object.assign(targetObj, req.body.untrustedData);",vulnerable,Modificación insegura del prototipo global de objetos a través de entradas no confiables.
+9,Deserialización Insegura (node-serialize),const yung = serialize.unserialize(req.cookies.session);,vulnerable,Deserialización de datos maliciosos que permiten ejecución de código remoto (RCE).
+10,XSS vía eval/setTimeout,"setTimeout(""console.log('User: ' + "" + req.query.name + "")"", 100);",vulnerable,Paso de cadenas dinámicas con concatenación a funciones de temporizador con evaluación implícita.
+11,SQL Injection con Template Literals,db.query(`SELECT * FROM accounts WHERE acc_num = '${req.body.account}'`);,vulnerable,Interpolación directa de entradas de usuario en plantillas de cadenas SQL.
+12,Inyección en InnerHTML con jQuery,$('#result').html(req.param('searchQuery'));,vulnerable,Inyección de scripts maliciosos mediante métodos de inserción HTML directos en frameworks.
+13,Escritura arbitraria de archivos,"fs.writeFileSync('/var/www/uploads/' + req.files.doc.name, req.files.doc.data);",vulnerable,Guardar archivos usando nombres originales proporcionados por el cliente sin sanitizar la ruta.
+14,Redirección abierta (Open Redirect),res.redirect(req.query.targetUrl);,vulnerable,Redirigir a usuarios a dominios externos maliciosos controlados mediante parámetros de URL.
+15,Inyección de expresiones regulares (ReDoS),const regex = new RegExp('^(' + req.body.pattern + ')+$');,vulnerable,Construcción de expresiones regulares con entradas de usuario susceptibles a denegación de servicio.
+16,Uso inseguro de crypto (MD5 débil),const hash = crypto.createHash('md5').update(req.body.password).digest('hex');,vulnerable,Uso de funciones hash criptográficas obsoletas y vulnerables a colisiones.
+17,Bypassing de autenticación por tipo flojo,if (user.password == req.body.password) { grantAccess(); },vulnerable,Comparación débil con doble igual (=) permitiendo omisiones de tipo en JavaScript.
+18,Inyección de cabeceras HTTP (CRLF),"res.setHeader('X-Custom-Header', req.body.headerValue);",vulnerable,Inyección de saltos de línea en cabeceras HTTP que pueden manipular respuestas del servidor.
+19,Uso de Function constructor inseguro,const dynamicFunc = new Function('return ' + req.body.code);,vulnerable,Evaluación dinámica de texto enviado por el usuario interpretado como código ejecutable.
+20,CORS mal configurado con comodín y credenciales,"res.setHeader('Access-Control-Allow-Origin', '*'); res.setHeader('Access-Control-Allow-Credentials', 'true');",vulnerable,Exposición de recursos protegidos por credenciales a cualquier origen externo.
+21,Consulta SQL Parametrizada,"db.query(""SELECT * FROM users WHERE id = ?"", [req.query.id], callback);",seguro,Uso correcto de consultas parametrizadas que separan comandos de los datos.
+22,Manipulación Segura del DOM,document.getElementById('user-bio').textContent = sanitize(req.body.bio);,seguro,Uso de textContent y sanitización previa para prevenir XSS.
+23,Ejecución de Procesos Segura,"child_process.execFile('ping', ['-c', '1', safeHost], (err, stdout) => {});",seguro,Uso de execFile pasando argumentos en un arreglo seguro sin interpolación en shell.
+24,Validación de Path Traversal,"const safePath = path.join('/publicfiles', path.basename(req.params.filename));",seguro,Uso de path.basename para extraer únicamente el nombre del archivo y evitar saltos de directorio.
+25,Parseo Seguro de Datos,const data = JSON.parse(req.body.jsonData);,seguro,Uso de JSON.parse nativo y seguro en lugar de funciones de evaluación dinámica.
+26,Consulta NoSQL Sanitizada con Mongoose,User.findOne({ username: String(req.body.username) });,seguro,Conversión explícita a tipo de dato primitivo para evitar operadores maliciosos en consultas.
+27,Petición SSRF Protegida por Lista Blanca,if (whitelist.includes(req.query.domain)) { axios.get(`https://${req.query.domain}/api`); },seguro,Restricción de destinos permitidos mediante una lista blanca estricta.
+28,Protección contra Prototype Pollution,"const safeMerge = (target, source) => { for (let key in source) { if (key !== '__proto__' && key !== 'constructor') { target[key] = source[key]; } } };",seguro,Bloqueo explícito de propiedades críticas del prototipo durante la fusión de objetos.
+29,Deserialización Segura con JSON,const obj = JSON.parse(req.cookies.sessionData);,seguro,Uso de análisis sintáctico basado en texto plano estructurado sin ejecución de código.
+30,Uso seguro de temporizadores con funciones,"setTimeout(() => { console.log('User logged in'); }, 100);",seguro,Paso de funciones callback directas en lugar de evaluar cadenas de texto dinámicas.
+31,ORM con consultas seguras por defecto,const user = await User.findOne({ where: { email: req.body.email } });,seguro,Uso de ORM (Sequelize) que aplica parametrización automática por defecto.
+32,Renderizado seguro con escape en plantillas,"res.render('profile', { username: req.user.name });",seguro,Motores de plantillas (como EJS/Pug) que escapan caracteres HTML automáticamente.
+33,Validación de subida de archivos por extensión y tipo MIME,if (allowedTypes.includes(req.file.mimetype)) { saveSecurely(req.file); },seguro,Validación previa de tipos permitidos antes de almacenar cualquier archivo.
+34,Redirección validada contra dominio local,const redirectUrl = req.query.url.startsWith('/') ? req.query.url : '/dashboard';,seguro,Comprobación estricta para asegurar redirecciones internas seguras.
+35,Validación de entradas con esquema (Joi),const { error } = schema.validate(req.body); if (error) throw new Error('Invalid input');,seguro,Uso de librerías de validación robustas para garantizar esquemas de datos correctos.
+36,Hashing robusto de contraseñas (bcrypt),"const hashedPassword = await bcrypt.hash(req.body.password, 12);",seguro,Uso de algoritmos de derivación de claves seguros con factor de trabajo adecuado.
+37,Comparación estricta de variables,if (user.role === 'admin' && token === validToken) { grantAccess(); },seguro,Uso del operador de igualdad estricta (===) para prevenir coerciones de tipo.
+38,Sanitización de cabeceras HTTP contra CRLF,"const cleanHeader = req.body.headerValue.replace(/[r
+]/g, ''); res.setHeader('X-Custom', cleanHeader);",seguro,Eliminación de caracteres de retorno de carro y nueva línea en valores de cabecera.
+39,Uso exclusivo de funciones declaradas en lugar de new Function,"function calculateTotal(price, tax) { return price + tax; }",seguro,Definición estática de lógica de negocio sin evaluación de código externo.
+40,CORS estrictamente configurado para dominios confiables,"const corsOptions = { origin: 'https://miaplicacion.com', credentials: true }; app.cors(corsOptions);",seguro,Restricción explícita de orígenes permitidos en solicitudes con credenciales.

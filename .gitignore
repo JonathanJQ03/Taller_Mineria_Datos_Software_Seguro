@@ -1,0 +1,22 @@
+# 1. Entorno virtual de Python (¡Nunca se sube!)
+venv/
+.venv/
+env/
+ENV/
+
+# 2. Archivos de caché y compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.manifest
+*.spec
+
+# 3. Archivos del sistema operativo
+desktop.ini
+.DS_Store
+Thumbs.db
+
+# 4. Checkpoints de Jupyter Notebook (Caché local de celdas)
+.ipynb_checkpoints/
+**/ .ipynb_checkpoints/
+
